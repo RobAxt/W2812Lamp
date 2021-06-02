@@ -1,0 +1,26 @@
+{
+    "name": "WS2812 LED Lamp @ Living Room",
+    "device_id": "ledLamp",
+    "device_stats_interval": 25,
+    "wifi": {
+      "ssid": "",
+      "password": ""
+    },
+    "mqtt": {
+      "host": "",
+      "port": 1883,
+      "auth": true,
+      "username": "",
+      "password": "",
+      "ssl": false
+    },
+    "ota": {
+      "enabled": true
+    },
+    "settings": {
+      "ws2812_brightness": 100,
+      "ws2812_speed": 1000,
+      "ws2812_mode":0,
+      "ws2812_color": 0
+      }
+  }
