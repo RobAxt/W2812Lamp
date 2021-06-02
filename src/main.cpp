@@ -36,6 +36,7 @@ void loop() {
 
 void onHomieEvent(const HomieEvent & event) {
   switch (event.type) {
+    case HomieEventType::MQTT_DISCONNECTED:
     case HomieEventType::WIFI_DISCONNECTED:
       WiFi.disconnect();
       break;
