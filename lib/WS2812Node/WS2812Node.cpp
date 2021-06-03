@@ -28,8 +28,7 @@ WS2812Node::setup() {
                                  unsigned long color = strtoul(value.c_str(),NULL,16);
                                  if(color == 0)
                                    _ws2812fx.strip_off();
-                                 else
-                                   _ws2812fx.setColor(color);
+                                 _ws2812fx.setColor(color);
                                  return true;
                                  });
   advertise(MODE_TOPIC).setName("RGB FX Mode")
