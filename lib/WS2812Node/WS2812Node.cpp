@@ -10,8 +10,8 @@ WS2812Node::WS2812Node(const char* id, const char* name, int ledPin, int ledCoun
   _mode = new HomieSetting<long>("ws2812_mode", "The FX Mode [0 .. 54] Default = 0");
   _mode->setDefaultValue(0).setValidator([](float candidate) {return (candidate >= 0) && (candidate <= 54);});
 
-  _color = new HomieSetting<long>("ws2812_color", "The Color [0 .. 0xFFFFFF] Default = 0xFF0000");
-  _color->setDefaultValue(0xFF0000).setValidator([](float candidate) {return (candidate >= 0) && (candidate <= 0xFFFFFF);});
+  _color = new HomieSetting<long>("ws2812_color", "The Color [0 .. 0xFFFFFF] Default = 0xFFFF00");
+  _color->setDefaultValue(0xFFFF00).setValidator([](float candidate) {return (candidate >= 0) && (candidate <= 0xFFFFFF);});
 }
 
 WS2812Node::~WS2812Node(){}
@@ -19,7 +19,7 @@ WS2812Node::~WS2812Node(){}
 void 
 WS2812Node::setup() {
   Homie.getLogger() << F("Calling Node Setup... Node Name: ") << getName() << endl;
-  setRunLoopDisconnected(false);
+  setRunLoopDisconnected(true);
   advertise(RGB_TOPIC).setName("RGB Color")
                       .setDatatype("unsigned integer")
                       .setFormat("0x000000-0xFFFFFF")
@@ -51,19 +51,21 @@ void
 WS2812Node::onReadyToOperate() {
   Homie.getLogger() << F("Calling Ready To Operate... Node Name: ") << getName() << endl;
   if(Homie.isConnected()) {
-    setProperty(RGB_TOPIC).send(String(_color->get(), 3).c_str());
-    setProperty(MODE_TOPIC).send(String(_mode->get(), 3).c_str());
+    setProperty(RGB_TOPIC).send(String(_ws2812fx.getColor(), 3).c_str());
+    setProperty(MODE_TOPIC).send(String(_ws2812fx.getMode(), 3).c_str());
   }
 }
 
 void 
 WS2812Node::loop() {
+  yield();
   _ws2812fx.service();
+  yield();
 }
 
 bool 
 WS2812Node::handleInput(const HomieRange& range, const String& property, const String& value) {
-//  Homie.getLogger() << F("Calling Node Handle Input...") << endl;  
+  Homie.getLogger() << F("Calling Node Handle Input...") << endl;  
   if(property != "rgb" && property != "mode") {
     Homie.getLogger() << F("  ✖ Error: property not handle: ") << property << endl; 
     return true;
@@ -76,6 +78,6 @@ WS2812Node::handleInput(const HomieRange& range, const String& property, const S
     Homie.getLogger() << F("  ✖ Error: wrong value for mode property: ") << value << endl; 
     return true;
   }
-//  Homie.getLogger() << F("  ✔ Receive Property/Value: ") << property  << F(" ━► ") << value << endl;
+  Homie.getLogger() << F("  ✔ Receive Property/Value: ") << property  << F(" ━► ") << value << endl;
   return false;
 }

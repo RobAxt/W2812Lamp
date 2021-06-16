@@ -29,3 +29,5 @@ class WS2812Node : public HomieNode {
         WS2812FX _ws2812fx;
 };
 #endif //WS2812Node_hpp
+//https://github.com/kitesurfer1404/WS2812FX.git#master
+//https://github.com/kitesurfer1404/WS2812FX/issues/151
