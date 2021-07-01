@@ -3,13 +3,15 @@
 
 #include <Homie.hpp>
 #include <WS2812FX.h>
+#include <NeoPixelBus.h>
 
 class WS2812Node : public HomieNode {
     public:
-        static const int LED_PIN = D7;
+        static const int LED_PIN = RX;
         static const int LED_COUNT = 20;
         explicit WS2812Node(const char* id, const char* name, int ledPin = LED_PIN, int ledCount = LED_COUNT);
         ~WS2812Node();
+        void customShow();
 
     protected:
         virtual void setup() override;
@@ -27,7 +29,12 @@ class WS2812Node : public HomieNode {
         HomieSetting<long> *_color; 
 
         WS2812FX _ws2812fx;
+        NeoPixelBus<NeoGrbFeature, NeoEsp8266Dma800KbpsMethod> _strip;
 };
+
+void myCustomShow(void);
+
+extern WS2812Node ws2812Node;
 #endif //WS2812Node_hpp
 //https://github.com/kitesurfer1404/WS2812FX.git#master
 //https://github.com/kitesurfer1404/WS2812FX/issues/151

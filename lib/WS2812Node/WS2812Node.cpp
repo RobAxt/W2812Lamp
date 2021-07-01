@@ -1,6 +1,6 @@
 #include "WS2812Node.hpp"
 
-WS2812Node::WS2812Node(const char* id, const char* name, int ledPin, int ledCount) : HomieNode(id, name, "WS2812"), _ws2812fx(ledCount, ledPin, NEO_GRB + NEO_KHZ800) {
+WS2812Node::WS2812Node(const char* id, const char* name, int ledPin, int ledCount) : HomieNode(id, name, "WS2812"), _ws2812fx(ledCount, ledPin, NEO_GRB + NEO_KHZ800), _strip(ledCount) {
   _brightness = new HomieSetting<long>("ws2812_brightness", "The Brightness [0 .. 100] Default = 100");
   _brightness->setDefaultValue(100).setValidator([](float candidate) {return (candidate >= 0) && (candidate <= 100);});
 
@@ -40,6 +40,9 @@ WS2812Node::setup() {
                                  return true;
                                  });  
   _ws2812fx.init();
+  _strip.Begin();
+  _strip.Show();
+  _ws2812fx.setCustomShow(myCustomShow);
   _ws2812fx.setBrightness(_brightness->get());
   _ws2812fx.setSpeed(_speed->get());
   _ws2812fx.setMode(_mode->get());
@@ -80,4 +83,18 @@ WS2812Node::handleInput(const HomieRange& range, const String& property, const S
   }
   Homie.getLogger() << F("  ✔ Receive Property/Value: ") << property  << F(" ━► ") << value << endl;
   return false;
+}
+
+void myCustomShow(void) {
+  ws2812Node.customShow();
+}
+
+void
+WS2812Node::customShow() {
+  if(_strip.CanShow()) {
+    // copy the WS2812FX pixel data to the NeoPixelBus instance
+    memcpy(_strip.Pixels(), _ws2812fx.getPixels(), _strip.PixelsSize());
+    _strip.Dirty();
+    _strip.Show();
+  }
 }

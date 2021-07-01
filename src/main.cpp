@@ -17,7 +17,7 @@ WS2812Node ws2812Node("ws2812","WS2812 LED Lamp");
 
 void setup() {
 #if DEBUG_APP
-  Serial.begin(SERIAL_SPEED);
+  Serial.begin(SERIAL_SPEED,SERIAL_8N1,SERIAL_TX_ONLY);
   Serial << endl << endl;
 //  Homie.setLoggingPrinter(&SyslogStream);
   Homie.getLogger() << F("Build Date and Time: ") << __DATE__ << " & " << __TIME__ << endl;
