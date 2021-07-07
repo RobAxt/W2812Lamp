@@ -47,9 +47,6 @@ SyslogStreamClass::write(uint8_t val) {
   if(val != 0x0D && val != 0x0A)
     _buffer[_count++] = val;
   if ((_count == BUFFER_SIZE) || (val == 0x0A)) {
-    if(Homie.isConnected()) 
-      printMessage();  
-     else 
       storeMessage();      
     _count = 0;
   }
@@ -63,8 +60,11 @@ SyslogStreamClass::storeMessage(void){
   memcpy(msg,_buffer,_count);
   msg[_count] = '\0';
   _offlineQueue.unshift(msg);
-  Serial.print("*** ");
-  Serial.print(msg);
+}
+
+void
+SyslogStreamClass::loop(void) {
+  printMessage();  
 }
 
 void
@@ -72,12 +72,10 @@ SyslogStreamClass::printMessage(void) {
   while(!_offlineQueue.isEmpty()) {
     char *msg = _offlineQueue.pop();
     _syslog.logf(_level,"%s", msg);
-    delay(25);
     delete [] msg;
+    yield();
+    delay(7);
   }
-  _buffer[_count] = '\0';
-  _syslog.log(_level, _buffer); 
-  delay(25);
 }
 
 SyslogStreamClass SyslogStream;

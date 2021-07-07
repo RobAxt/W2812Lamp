@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Homie.h>
-//#include "SyslogStream.hpp"
+#include "SyslogStream.hpp"
 #include "WS2812Node.hpp"
 
 #define FW_NAME "W2812 LED Lamp"
@@ -19,16 +19,16 @@ void setup() {
 #if DEBUG_APP
   Serial.begin(SERIAL_SPEED,SERIAL_8N1,SERIAL_TX_ONLY);
   Serial << endl << endl;
-//  Homie.setLoggingPrinter(&SyslogStream);
+  Homie.setLoggingPrinter(&SyslogStream);
   Homie.getLogger() << F("Build Date and Time: ") << __DATE__ << " & " << __TIME__ << endl;
 #else
   Homie.disableLogging();
 #endif
   Homie_setFirmware(FW_NAME, FW_VERSION); // The underscore is not a typo! See Magic bytes
   Homie.onEvent(onHomieEvent);
-//  Homie.setLoopFunction([](){SyslogStream.loop();});
+  Homie.setLoopFunction([](){SyslogStream.loop();});
   Homie.setup();
-//  SyslogStream.setup(Homie.getConfiguration().mqtt.server.host, Homie.getConfiguration().deviceId, "");
+  SyslogStream.setup(Homie.getConfiguration().mqtt.server.host, Homie.getConfiguration().deviceId, "");
 }
 
 void loop() {

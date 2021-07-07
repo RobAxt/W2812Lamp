@@ -36,6 +36,8 @@ class SyslogStreamClass : public Stream {
     void appName(const char* appName = SYSLOG_NILVALUE);
     void setSyslogLevel(uint16_t level = LOG_INFO);
 
+    void loop(void);
+    
     virtual int read(){return 0;};
     virtual int available(){return 0;};
     virtual int peek(){return 0;};
